@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--[if lte IE 6]><html class="preIE7 preIE8 preIE9"><![endif]-->
+<!--[if IE 7]><html class="preIE8 preIE9"><![endif]-->
+<!--[if IE 8]><html class="preIE9"><![endif]-->
+<!--[if gte IE 9]><!-->
+<html><!--<![endif]-->
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Dynamic To-Do List</title>
+        <style type="text/css">
+            *, *::after, *::before {
+                box-sizing: border-box;
+                font-family: sans-serif;
+            }
+            html, body {
+                margin: 0;
+                padding: 0;
+                background-color: rgb(50, 50, 50);
+            }
+            #pageCont {
+                margin: 0;
+                padding: 0.5em;
+            }
+            #listCont, h1 {
+                width: 100%;
+                max-width: 500px;
+                margin: 0 auto;
+                background-color: rgb(56, 134, 182);
+            }
+            h1 {
+                text-align: center;
+                margin-top: 1em;
+                padding-top: 0.35em;
+                font-size: 2.5em;
+            }
+            #listCont {
+                padding: 1em;
+            }
+            #addBtn {
+                width: 27%;
+                margin-left: 10px;
+                padding: 0.5em;
+                background-color: rgb(0, 177, 68);
+                border: none;
+                font-weight: bold;
+                color: white;
+            }
+            #addBtn:hover {
+                cursor: pointer;
+                background-color: rgb(0, 201, 77);
+            }
+            #addBtn, #addInput {
+                font-size: 1em;
+                border: 2px solid transparent;
+            }
+            #addBtn:focus, #addInput:focus {
+                border: 2px solid rgb(255, 187, 0);
+                outline: none;
+            }
+            #addInput {
+                width: 69%;
+                margin: 0;
+                padding: .5em;
+            }
+            .clearTasksContainer {
+                margin: 0.5em 0 0.5em 0;
+                text-align: right;
+            }
+            #clearTasks {
+                font-size: 0.9em;
+                color: rgb(0, 32, 121);
+                border: 2px solid transparent;
+                background-color: transparent;
+            }
+            #clearTasks:hover, #clearTasks:focus {
+                cursor: pointer;
+                color: rgb(177, 0, 0);
+                border: 2px solid rgb(255, 187, 0);
+                outline: none;
+            }
+            #listGroup {
+                min-height: 50px;
+                padding: 0.01em 0.75em;
+                background-color: rgb(255, 255, 255);
+            }
+            .listItem {
+                position: relative;
+            }
+            .listItem:nth-child(even) {
+                margin: 0.75em 0;
+                background-color: rgb(186, 186, 186);
+            }
+            .listItem:nth-child(odd) {
+                margin: 0.75em 0;
+                background-color: rgb(215, 215, 215);
+            }
+            .listInput {
+                width: 100%;
+                border: 2px solid transparent;
+                margin: 0;
+                padding: 0.5em;
+                background-color: rgba(0, 0, 0, 0);
+                font-size: 1em;
+            }
+            .listInput:focus {
+                border: 2px solid rgb(255, 187, 0);
+                outline: none;
+            }
+            .removeItem {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 0.25em 0.5em;
+                background-color: rgb(143, 0, 0);
+                color: white;
+                border: 2px solid transparent;
+                font-weight: bold;
+            }
+            .removeItem:hover, .removeItem:focus {
+                cursor: pointer;
+                border: 2px solid yellow;
+                outline: none;
+                background-color: rgb(255, 0, 0);
+            }
+
+            @media screen and (max-width: 425px) {
+                #addBtn, #addInput {
+                    margin: 0;
+                    margin: 10px auto;
+                    display: block;
+                    width: unset;
+                }
+                #addInput {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="pageCont">
+            <h1>Dynamic To-Do List</h1>
+            <div id="listCont">
+                <form action="" method="post" id="addCont" onsubmit="return false">
+                    <input id="addInput" type="text" placeholder="Type your to-do here" autofocus tabindex="0"></input>
+                    <button id="addBtn" tabindex="0">Add Item</button>
+                    <div class="clearTasksContainer">
+                        <button id="clearTasks" tabindex="0">clear all tasks</button>
+                    </div>
+                </form>
+                <div id="listGroup"></div>
+            </div>
+        </div>
+        <script>
+            let addBtn = document.getElementById('addBtn');
+            let addInput = document.getElementById('addInput');
+            let listCont = document.getElementById('listCont');
+            let listGroup = document.getElementById('listGroup');
+            
+            function removeItem(e) {
+                e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+            }
+            
+            function addItem() {
+                if (addInput.value !== '') {
+                    let newItem = document.createElement('div');
+                    let newInput = document.createElement('input');
+                    let newRemove = document.createElement('button');
+                    newItem.classList.add('listItem');
+                    newInput.classList.add('listInput');
+                    newInput.type = 'text';
+                    newRemove.classList.add('removeItem');
+                    newRemove.tabIndex = '0';
+                    newRemove.innerHTML = '&#10006;';
+                    newInput.value = addInput.value;
+                    newItem.appendChild(newInput);
+                    newItem.appendChild(newRemove);
+                    listGroup.appendChild(newItem);
+                    addInput.value = '';
+                }
+            }
+            
+            function editItem(e) {
+                e.target.contentEditable = 'true';
+            }
+            
+            listCont.addEventListener('click', function(e) {
+                if (e.target.classList.contains('removeItem')) {
+                    removeItem(e);
+                } else if (e.target === addBtn) {
+                    addItem();
+                } else if (e.target.classList.contains('listItem') && !e.target.classList.contains('removeItem')) {
+                    editItem(e);
+                }
+            });
+
+            document.getElementById('clearTasks').addEventListener('click', function() {
+                let listItems = Array.from(document.getElementsByClassName('listItem'));
+                listItems.forEach((item) => {
+                    item.remove();
+                });
+            });
+
+            document.addEventListener('keypu', function(event) {
+                if (event.target.classList.contains('removeItem')) {
+                    event.target.click();
+                }
+            });
+
+        </script>
+    </body>
+</html>
